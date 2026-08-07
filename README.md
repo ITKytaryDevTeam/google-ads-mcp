@@ -109,6 +109,9 @@ To enable it, set the following environment variables:
 - `GOOGLE_ADS_MCP_STORAGE_REDIS_URL`: (Optional) Redis URL for `redis` persistent storage.
 - `GOOGLE_ADS_MCP_STORAGE_ENCRYPTION_KEY`: (Optional) Encryption key for stored OAuth tokens.
 - `GOOGLE_ADS_MCP_STORAGE_DISABLE_ENCRYPTION`: (Optional) Set to `true` to disable token encryption.
+- `GOOGLE_ADS_MCP_ACCESS_TOKEN_EXPIRY_SECONDS`: (Optional) Lifetime of the FastMCP-issued access token in seconds (defaults to `86400`). The upstream Google token remains the source of truth and is refreshed transparently.
+- `GOOGLE_ADS_MCP_ALLOWED_EMAILS`: (Optional) Comma-separated allowlist of exact, verified Google email addresses.
+- `GOOGLE_ADS_MCP_ALLOWED_DOMAINS`: (Optional) Comma-separated allowlist of verified Google email domains. If either allowlist is configured, all HTTP tool and resource access must match it.
 
 Once this is enabled, you can authenticate to the API through your MCP client.
 

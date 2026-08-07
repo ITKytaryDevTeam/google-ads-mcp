@@ -1,0 +1,35 @@
+services:
+  google-ads-mcp:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    init: true
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+    ports:
+      - "127.0.0.1:8025:8080"
+    environment:
+      PORT: "8080"
+      GOOGLE_ADS_DEVELOPER_TOKEN: "${GOOGLE_ADS_DEVELOPER_TOKEN:?required}"
+      GOOGLE_ADS_LOGIN_CUSTOMER_ID: "${GOOGLE_ADS_LOGIN_CUSTOMER_ID:-}"
+      GOOGLE_ADS_MCP_OAUTH_CLIENT_ID: "${GOOGLE_ADS_MCP_OAUTH_CLIENT_ID:?required}"
+      GOOGLE_ADS_MCP_OAUTH_CLIENT_SECRET: "${GOOGLE_ADS_MCP_OAUTH_CLIENT_SECRET:?required}"
+      GOOGLE_ADS_MCP_BASE_URL: "https://google-ads-mcp.kytaryai.org"
+      GOOGLE_ADS_MCP_JWT_SIGNING_KEY: "${GOOGLE_ADS_MCP_JWT_SIGNING_KEY:?required}"
+      GOOGLE_ADS_MCP_STORAGE_TYPE: "filetree"
+      GOOGLE_ADS_MCP_STORAGE_PATH: "/var/lib/google-ads-mcp/oauth"
+      GOOGLE_ADS_MCP_STORAGE_ENCRYPTION_KEY: "${GOOGLE_ADS_MCP_STORAGE_ENCRYPTION_KEY:?required}"
+      GOOGLE_ADS_MCP_ACCESS_TOKEN_EXPIRY_SECONDS: "86400"
+      GOOGLE_ADS_MCP_ALLOWED_DOMAINS: "${GOOGLE_ADS_MCP_ALLOWED_DOMAINS:-kytary.cz,audiopartner.com}"
+      GOOGLE_ADS_MCP_TOOLS_CONFIG: "/app/ads_mcp/tools_config.yaml"
+    volumes:
+      - google_ads_mcp_oauth:/var/lib/google-ads-mcp/oauth
+
+volumes:
+  google_ads_mcp_oauth:

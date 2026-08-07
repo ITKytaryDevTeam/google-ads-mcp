@@ -56,6 +56,9 @@ class TestAuthConfig(unittest.TestCase):
             "GOOGLE_ADS_MCP_OAUTH_CLIENT_ID",
             "GOOGLE_ADS_MCP_OAUTH_CLIENT_SECRET",
             "GOOGLE_ADS_MCP_BASE_URL",
+            "GOOGLE_ADS_MCP_ACCESS_TOKEN_EXPIRY_SECONDS",
+            "GOOGLE_ADS_MCP_ALLOWED_EMAILS",
+            "GOOGLE_ADS_MCP_ALLOWED_DOMAINS",
         ]
         self.orig_env = {}
         for key in self.env_keys:
@@ -150,6 +153,7 @@ class TestAuthConfig(unittest.TestCase):
         self.assertEqual(kwargs["client_id"], "dummy_client_id")
         self.assertEqual(kwargs["client_secret"], "dummy_client_secret")
         self.assertEqual(kwargs["jwt_signing_key"], "custom_jwt_signing_key")
+        self.assertEqual(kwargs["fastmcp_access_token_expiry_seconds"], 86400)
         self.assertIn("client_storage", kwargs)
         self.assertIsInstance(kwargs["client_storage"], FernetEncryptionWrapper)
 

@@ -23,12 +23,33 @@ import os
 from typing import Any
 from fastmcp import FastMCP
 from fastmcp.server.auth.providers.google import GoogleProvider
+from fastmcp.server.middleware import AuthMiddleware
+from ads_mcp.access import create_google_email_access_check
 from ads_mcp.auth_storage import create_client_storage
 
 _CLIENT_ID = os.environ.get("GOOGLE_ADS_MCP_OAUTH_CLIENT_ID")
 _CLIENT_SECRET = os.environ.get("GOOGLE_ADS_MCP_OAUTH_CLIENT_SECRET")
 _BASE_URL = os.environ.get("GOOGLE_ADS_MCP_BASE_URL", "http://localhost:8080")
 _JWT_SIGNING_KEY = os.environ.get("GOOGLE_ADS_MCP_JWT_SIGNING_KEY")
+
+
+def _access_token_expiry_seconds() -> int:
+    """Return the configured lifetime for FastMCP-issued access tokens."""
+    raw_value = os.environ.get(
+        "GOOGLE_ADS_MCP_ACCESS_TOKEN_EXPIRY_SECONDS", "86400"
+    )
+    try:
+        value = int(raw_value)
+    except ValueError as exc:
+        raise ValueError(
+            "GOOGLE_ADS_MCP_ACCESS_TOKEN_EXPIRY_SECONDS must be an integer."
+        ) from exc
+    if value <= 0:
+        raise ValueError(
+            "GOOGLE_ADS_MCP_ACCESS_TOKEN_EXPIRY_SECONDS must be positive."
+        )
+    return value
+
 
 if _CLIENT_ID and _CLIENT_SECRET:
     client_storage = create_client_storage()
@@ -42,6 +63,7 @@ if _CLIENT_ID and _CLIENT_SECRET:
             "https://www.googleapis.com/auth/userinfo.profile",
             "https://www.googleapis.com/auth/adwords",
         ],
+        "fastmcp_access_token_expiry_seconds": (_access_token_expiry_seconds()),
     }
     if _JWT_SIGNING_KEY:
         provider_kwargs["jwt_signing_key"] = _JWT_SIGNING_KEY
@@ -49,7 +71,11 @@ if _CLIENT_ID and _CLIENT_SECRET:
         provider_kwargs["client_storage"] = client_storage
 
     auth = GoogleProvider(**provider_kwargs)
-    mcp = FastMCP("Google Ads Server", auth=auth)
+    middleware = []
+    access_check = create_google_email_access_check()
+    if access_check is not None:
+        middleware.append(AuthMiddleware(auth=access_check))
+    mcp = FastMCP("Google Ads Server", auth=auth, middleware=middleware)
 else:
     mcp = FastMCP("Google Ads Server")
 

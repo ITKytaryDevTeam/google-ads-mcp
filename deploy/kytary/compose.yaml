@@ -26,7 +26,8 @@ services:
       GOOGLE_ADS_MCP_STORAGE_PATH: "/var/lib/google-ads-mcp/oauth"
       GOOGLE_ADS_MCP_STORAGE_ENCRYPTION_KEY: "${GOOGLE_ADS_MCP_STORAGE_ENCRYPTION_KEY:?required}"
       GOOGLE_ADS_MCP_ACCESS_TOKEN_EXPIRY_SECONDS: "86400"
-      GOOGLE_ADS_MCP_ALLOWED_DOMAINS: "${GOOGLE_ADS_MCP_ALLOWED_DOMAINS:-kytary.cz,audiopartner.com}"
+      GOOGLE_ADS_MCP_ALLOWED_EMAILS: "${GOOGLE_ADS_MCP_ALLOWED_EMAILS:?required}"
+      GOOGLE_ADS_MCP_ALLOWED_DOMAINS: "${GOOGLE_ADS_MCP_ALLOWED_DOMAINS:-}"
       GOOGLE_ADS_MCP_TOOLS_CONFIG: "/app/ads_mcp/tools_config.yaml"
     volumes:
       - google_ads_mcp_oauth:/var/lib/google-ads-mcp/oauth

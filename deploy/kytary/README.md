@@ -44,10 +44,10 @@ OAuth client registrations and encrypted token state through container
 restarts. Never rotate either application secret without planning to invalidate
 existing connector sessions.
 
-The container publishes only on loopback port 8025. The production allowlist
-accepts verified Google identities in `kytary.cz` and `audiopartner.com`; use
-`GOOGLE_ADS_MCP_ALLOWED_EMAILS` in Coolify as an additional comma-separated
-exact-user allowlist if needed.
+The container publishes only on loopback port 8025. The production deployment
+requires `GOOGLE_ADS_MCP_ALLOWED_EMAILS` as a comma-separated exact-user
+allowlist. `GOOGLE_ADS_MCP_ALLOWED_DOMAINS` is optional and empty by default;
+leave it empty when access must be restricted to the named users only.
 
 ## Cloudflare Tunnel
 

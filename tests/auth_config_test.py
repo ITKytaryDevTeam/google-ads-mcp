@@ -14,6 +14,7 @@
 
 """Unit tests for authentication configuration and storage setup."""
 
+import asyncio
 import os
 import pathlib
 import shutil
@@ -102,6 +103,28 @@ class TestAuthConfig(unittest.TestCase):
         store = create_client_storage()
         self.assertIsInstance(store, FernetEncryptionWrapper)
         self.assertIsInstance(store.key_value, FileTreeStore)
+
+    def test_create_client_storage_filetree_round_trips_url_key(self):
+        """URL-shaped OAuth client IDs must not become filesystem paths."""
+        path = os.path.join(self.temp_dir, "filetree_url_key")
+        os.environ["GOOGLE_ADS_MCP_STORAGE_TYPE"] = "filetree"
+        os.environ["GOOGLE_ADS_MCP_STORAGE_PATH"] = path
+        os.environ["GOOGLE_ADS_MCP_STORAGE_DISABLE_ENCRYPTION"] = "true"
+        store = create_client_storage()
+
+        async def round_trip() -> None:
+            key = "https://claude.ai/oauth"
+            value = {"client_name": "Claude"}
+            collection = "oauth_clients"
+            await store.put(key=key, value=value, collection=collection)
+            self.assertEqual(
+                await store.get(key=key, collection=collection), value
+            )
+
+        asyncio.run(round_trip())
+        self.assertFalse(
+            (pathlib.Path(path) / "oauth_clients" / "https:").exists()
+        )
 
     def test_create_client_storage_filetree_missing_path_raises(self):
         """Tests that filetree storage without a path raises ValueError."""

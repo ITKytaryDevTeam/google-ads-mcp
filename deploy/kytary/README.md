@@ -27,9 +27,12 @@ a read-only Ads scope. This server only exposes the three upstream read tools.
 
 ## Coolify
 
-Deploy the repository with `deploy/kytary/compose.yaml`. Keep exactly one
-replica and configure all values from `env.example` as secrets. Generate the
-two application secrets independently, for example:
+Deploy the repository with `deploy/kytary/compose.yaml`. Its build context is
+the repository root, matching Coolify's Compose project directory. For a local
+deployment, preserve the same resolution with
+`docker compose --project-directory . -f deploy/kytary/compose.yaml up`.
+Keep exactly one replica and configure all values from `env.example` as
+secrets. Generate the two application secrets independently, for example:
 
 ```shell
 openssl rand -hex 32

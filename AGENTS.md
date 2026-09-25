@@ -1,4 +1,4 @@
-## LLM Wiki sync
+## LLM Wiki sync (blocking rule)
 
 Po každé změně, která mění uživatelské chování, provoz, integraci, autentizaci,
 datový kontrakt nebo nasazení, aktualizuj odpovídající entitu a měsíční
